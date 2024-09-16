@@ -12,8 +12,7 @@
       <form class="search" role="search">
         <label class="offscreen" for="sidebar-search-input">Search for a note by title</label>
         <input id="sidebar-search-input" placeholder="Search" name="query" value="" hx-post="/search"
-          hx-trigger="keyup delay:500ms"
-          _="on htmx:beforeSend add .spinner--active to #search-spinner on htmx:afterOnLoad remove .spinner--active from #search-spinner" />
+          hx-trigger="keyup delay:10ms" />
         <div id="search-spinner" class="spinner" role="progressbar" aria-label="search loading spinner"
           aria-busy="true"></div>
       </form>

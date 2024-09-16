@@ -25,14 +25,13 @@ app.get("/", (req, res) => {
     "utf8",
   );
 
-  const empty = fs.readFileSync(
-    path.join(__dirname, "views", "empty.html"),
+  const readview = (fileName) => fs.readFileSync(
+    path.join(__dirname, "views", fileName),
     "utf8",
-  );
-  const loading = fs.readFileSync(
-    path.join(__dirname, "views", "loading.html"),
-    "utf8",
-  );
+  )
+
+  const empty = readview("empty.html");
+  const loading = readview("loading.html");
 
   const noteslist = helpers.renderNotesList(notes);
   const html = mustache.render(indexHtml, {}, { noteslist, loading, empty });
@@ -49,7 +48,9 @@ app.get("/note/:id", (req, res) => {
   const markdown = marked(note.content);
   const markup = mustache.render(templateHtml, {
     markdown,
-    update: note.update,
+    title: note.title,
+    update: note.createdAt,
+    id: note.id
   });
   res.send(markup);
 });
@@ -85,7 +86,7 @@ app.post("/note", (req, res) => {
     path.join(__dirname, "views", "note.html"),
     "utf8",
   );
-  const noteMarkup = mustache.render(noteTemplateHtml, { note, markdown });
+  const noteMarkup = mustache.render(noteTemplateHtml, { ...note, markdown });
   res.send(notesListHtml + noteMarkup);
 });
 
@@ -101,7 +102,7 @@ app.put("/note/:id", (req, res) => {
     path.join(__dirname, "views", "note.html"),
     "utf8",
   );
-  const markup = mustache.render(templateHtml, { note, markdown });
+  const markup = mustache.render(templateHtml, { ...note, markdown });
   res.send(markup);
 });
 
@@ -113,7 +114,7 @@ app.get("/edit/:id", (req, res) => {
     "utf8",
   );
   const markdown = marked(note.content);
-  const markup = mustache.render(templateHtml, { note, markdown });
+  const markup = mustache.render(templateHtml, { ...note, markdown });
   res.send(markup);
 });
 

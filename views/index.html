@@ -1,3 +1,7 @@
+<header>
+  <title>htmx-notes</title>
+  <link href="/styles.css" rel="stylesheet" />
+</header>
 <div class="main">
   <section class="col sidebar">
     <section class="sidebar-header">
@@ -19,14 +23,14 @@
     </section>
     <nav>
       <!-- Include _notes-list content here -->
-      {{noteslist}}
+      {{> noteslist}}
     </nav>
   </section>
 
   <section id="note-viewer" class="col note-viewer">
-    {{loading}}
+    {{> loading}}
     <!-- Include _loading content here -->
-    {{empty}}
+    {{> empty}}
     <!-- Include _empty content here -->
   </section>
 </div>

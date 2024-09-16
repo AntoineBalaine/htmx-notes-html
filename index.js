@@ -33,27 +33,33 @@ app.get("/", (req, res) => {
     path.join(__dirname, "views", "loading.html"),
     "utf8",
   );
-  renderNotesList(notes);
-  const html = mustache.render(indexHtml, { _notes, loading, empty });
+
+  const noteslist = helpers.renderNotesList(notes);
+  const html = mustache.render(indexHtml, {}, { noteslist, loading, empty });
   res.send(html);
 });
 
 app.get("/note/:id", (req, res) => {
   const { id } = req.params;
   const note = notes.find((n) => n.id == id);
-  // const template = pug.compileFile('views/_note.pug');
   const templateHtml = fs.readFileSync(
     path.join(__dirname, "views", "note.html"),
     "utf8",
   );
   const markdown = marked(note.content);
-  mustache.render(templateHtml, { markdown, update: note.update });
+  const markup = mustache.render(templateHtml, {
+    markdown,
+    update: note.update,
+  });
   res.send(markup);
 });
 
 app.get("/new", (req, res) => {
-  // const template = pug.compileFile('views/_new-note.pug');
-  const markup = template({});
+  const templateHtml = fs.readFileSync(
+    path.join(__dirname, "views", "new-note.html"),
+    "utf8",
+  );
+  const markup = mustache.render(templateHtml, {});
   res.send(markup);
 });
 
@@ -66,7 +72,6 @@ app.post("/preview", (req, res) => {
 app.post("/note", (req, res) => {
   console.log(req.body);
   const { title, draft } = req.body;
-  // const template = pug.compileFile('views/_note.pug');
   const markdown = marked(draft);
   const note = {
     id: v4(),
@@ -75,10 +80,13 @@ app.post("/note", (req, res) => {
     createdAt: new Date().toLocaleString(),
   };
   notes.unshift(note);
-  // const tmpltNotesList = pug.compileFile('views/_notes-list.pug');
-  let markup = tmpltNotesList({ notes });
-  markup += template({ note, markdown });
-  res.send(markup);
+  const notesListHtml = helpers.renderNotesList(notes);
+  const noteTemplateHtml = fs.readFileSync(
+    path.join(__dirname, "views", "note.html"),
+    "utf8",
+  );
+  const noteMarkup = mustache.render(noteTemplateHtml, { note, markdown });
+  res.send(notesListHtml + noteMarkup);
 });
 
 app.put("/note/:id", (req, res) => {
@@ -86,39 +94,48 @@ app.put("/note/:id", (req, res) => {
   const { id } = req.params;
   const note = notes.find((n) => n.id == id);
   const { title, draft } = req.body;
-  // const template = pug.compileFile('views/_note.pug');
   const markdown = marked(draft);
   note.title = title;
   note.content = draft;
-  const markup = template({ note, markdown });
+  const templateHtml = fs.readFileSync(
+    path.join(__dirname, "views", "note.html"),
+    "utf8",
+  );
+  const markup = mustache.render(templateHtml, { note, markdown });
   res.send(markup);
 });
 
 app.get("/edit/:id", (req, res) => {
   const { id } = req.params;
   const note = notes.find((n) => n.id == id);
-  // const template = pug.compileFile('views/_edit-note.pug');
+  const templateHtml = fs.readFileSync(
+    path.join(__dirname, "views", "edit-note.html"),
+    "utf8",
+  );
   const markdown = marked(note.content);
-  const markup = template({ note, markdown });
+  const markup = mustache.render(templateHtml, { note, markdown });
   res.send(markup);
 });
 
 app.delete("/note/:id", (req, res) => {
   const { id } = req.params;
   notes = notes.filter((n) => n.id != id);
-  // const template = pug.compileFile('views/_notes-list.pug');
-  let markup = template({ notes });
-  // const emptyTemplate = pug.compileFile('views/_empty.pug');
-  markup += emptyTemplate();
-  res.send(markup);
+  const notesListHtml = helpers.renderNotesList(notes);
+  const emptyTemplateHtml = fs.readFileSync(
+    path.join(__dirname, "views", "empty.html"),
+    "utf8",
+  );
+  const emptyMarkup = mustache.render(emptyTemplateHtml, {});
+  res.send(notesListHtml + emptyMarkup);
 });
 
 app.post("/search", (req, res) => {
   const { query } = req.body;
-  const results = notes.filter((n) => n.title.toLowerCase().includes(query));
-  // const template = pug.compileFile('views/_notes-list.pug');
-  let markup = template({ notes: results });
-  res.send(markup);
+  const results = notes.filter((n) =>
+    n.title.toLowerCase().includes(query.toLowerCase()),
+  );
+  const notesListHtml = helpers.renderNotesList(results);
+  res.send(notesListHtml);
 });
 
 app.listen(PORT);

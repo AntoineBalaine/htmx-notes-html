@@ -1,0 +1,15 @@
+<div class="note">
+  <div class="note-header">
+    <h1 class="note-title">{{title}}</h1>
+    <div class="note-menu" role="menubar">
+      <small class="note-updated-at" role="status">{{update}}</small>
+      <button class="edit-button edit-button--outline" hx-get="/edit/{{note.id}}" hx-target="#note-viewer"
+        role="menuitem">
+        Edit
+      </button>
+    </div>
+  </div>
+  <div class="note-preview">
+    <div class="text-with-markdown">{{{markdown}}}</div>
+  </div>
+</div>

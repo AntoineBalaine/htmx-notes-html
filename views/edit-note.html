@@ -1,0 +1,29 @@
+<div class="note-editor">
+  <form class="note-editor-form" autocomplete="off" hx-put="/note/{{note.id}}" hx-target="#note-viewer"
+    hx-trigger="click from:#btn-done">
+    <label class="offscreen" for="note-title-input">Enter a title for your note</label>
+    <input id="note-title-input" type="text" name="title" />
+    <label class="offscreen" for="note-body-input">Enter the body for your note</label>
+    <textarea id="note-body-input" name="draft" hx-post="/preview" hx-trigger="keyup changed delay:1000ms"
+      hx-target="#markdown">
+      {{note.content}}
+    </textarea>
+  </form>
+  <div class="note-editor-preview">
+    <div class="note-editor-menu" role="menubar">
+      <button id="btn-done" class="note-editor-done" type="submit">
+        <img src="/images/checkmark.svg" alt="" role="presentation" width="14px" height="10px" />
+        Done
+      </button>
+      <button class="note-editor-delete" role="menuitem" hx-delete="/note/{{note.id}}" hx-target="#note-viewer">
+        <img src="/images/cross.svg" alt="" role="presentation" width="10px" height="10px" />
+        Delete
+      </button>
+    </div>
+    <div class="label label--preview" role="status">Preview</div>
+    <h1 id="note-title" class="note-title">{{note.title}}</h1>
+    <div class="note-preview">
+      <div id="markdown" class="text-with-markdown">{{markdown}}</div>
+    </div>
+  </div>
+</div>

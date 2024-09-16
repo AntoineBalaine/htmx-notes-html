@@ -1,0 +1,35 @@
+<div class="main">
+  <section class="col sidebar">
+    <section class="sidebar-header">
+      <img class="logo" src="/images/logo.png" alt="" role="presentation" width="22px" />
+      <strong>htmx Notes</strong>
+    </section>
+    <section class="sidebar-menu" role="menubar">
+      <form class="search" role="search">
+        <label class="offscreen" for="sidebar-search-input">Search for a note by title</label>
+        <input id="sidebar-search-input" placeholder="Search" name="query" value="" hx-post="/search"
+          hx-trigger="keyup delay:500ms"
+          _="on htmx:beforeSend add .spinner--active to #search-spinner on htmx:afterOnLoad remove .spinner--active from #search-spinner" />
+        <div id="search-spinner" class="spinner" role="progressbar" aria-label="search loading spinner"
+          aria-busy="true"></div>
+      </form>
+      <button class="edit-button edit-button--solid" role="menuitem" hx-get="/new" hx-target="#note-viewer">
+        New
+      </button>
+    </section>
+    <nav>
+      <!-- Include _notes-list content here -->
+      {{noteslist}}
+    </nav>
+  </section>
+
+  <section id="note-viewer" class="col note-viewer">
+    {{loading}}
+    <!-- Include _loading content here -->
+    {{empty}}
+    <!-- Include _empty content here -->
+  </section>
+</div>
+
+<script src="https://unpkg.com/htmx.org@1.3.1"></script>
+<script src="https://unpkg.com/hyperscript.org@0.0.8"></script>
